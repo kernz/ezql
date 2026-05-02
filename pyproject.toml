@@ -1,6 +1,6 @@
 [project]
 name = "ezql"
-version = "0.1.1"
+version = "0.1.2"
 description = "EZQL - simple wrapper around asyncpg with type safety checks and CLI validator"
 readme = "README.md"
 requires-python = ">=3.14"
