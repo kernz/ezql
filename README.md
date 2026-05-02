@@ -84,9 +84,9 @@ No magic - you write the SQL, EzQL maps the result.
 ## Transactions
 
 ```python
-async with client.transaction() as conn:
-    await conn.execute("INSERT INTO users (name) VALUES ($1)", "Nazar")
-    await conn.execute("INSERT INTO posts (user_id, title) VALUES ($1, $2)", 1, "My first post")
+async with client.transaction() as tx:
+    user = await tx.query_as(User, "INSERT INTO users (name) VALUES ($1) RETURNING id, name", "Nazar")
+    await tx.execute("INSERT INTO posts (user_id, title) VALUES ($1, $2)", user[0].id, "My first post")
 ```
 
 If any query fails, the entire transaction is rolled back automatically.

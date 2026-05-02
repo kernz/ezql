@@ -116,3 +116,32 @@ async def test_join_query(db: EZQL):
     assert result[0].user_name == "Nazar"
     assert result[0].post_title == "My first post"
     assert isinstance(result[0], UserWithPosts)
+
+@pytest.mark.asyncio
+async def test_transaction_commit(db: EZQL):
+    async with db.transaction() as tx:
+        await tx.execute("INSERT INTO users (name) VALUES ($1)", "TransactionUser")
+
+    users = await db.query_as(User, "SELECT id, name FROM users WHERE name = $1", "TransactionUser")
+    assert len(users) == 1
+    assert users[0].name == "TransactionUser"
+
+@pytest.mark.asyncio
+async def test_transaction_rollback(db: EZQL):
+    with pytest.raises(Exception):
+        async with db.transaction() as tx:
+            await tx.execute("INSERT INTO users (name) VALUES ($1)", "RollbackUser")
+            raise Exception("Forced rollback")
+
+    users = await db.query_as(User, "SELECT id, name FROM users WHERE name = $1", "RollbackUser")
+    assert users == []
+
+@pytest.mark.asyncio
+async def test_transaction_query_as(db: EZQL):
+    async with db.transaction() as tx:
+        await tx.execute("INSERT INTO users (name) VALUES ($1)", "TxQueryUser")
+        users = await tx.query_as(User, "SELECT id, name FROM users WHERE name = $1", "TxQueryUser")
+
+    assert len(users) == 1
+    assert users[0].name == "TxQueryUser"
+    assert isinstance(users[0], User)

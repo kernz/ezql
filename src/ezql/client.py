@@ -6,6 +6,16 @@ from pydantic import BaseModel
 
 T = TypeVar("T", bound=BaseModel)
 
+class EZQLTransaction:
+    def __init__(self, conn: asyncpg.Connection) -> None:
+        self._conn = conn
+
+    async def execute(self, query: str, *args: Any) -> None:
+        await self._conn.execute(query, *args)
+
+    async def query_as(self, model: Type[T], query: str, *args: Any) -> List[T]:
+        rows = await self._conn.fetch(query, *args)
+        return [model(**row) for row in rows]
 
 class EZQL:
     def __init__(self, pool: asyncpg.Pool) -> None:
@@ -15,7 +25,7 @@ class EZQL:
     async def transaction(self):
         async with self._pool.acquire() as conn:
             async with conn.transaction():
-                yield conn
+                yield EZQLTransaction(conn=conn) # type: ignore
 
     async def execute(self, query: str, *args: Any) -> None:
         """
