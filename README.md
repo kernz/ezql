@@ -15,6 +15,13 @@ If you're new to PostgreSQL, here are the best places to start:
 - [Official PostgreSQL Documentation](https://www.postgresql.org/docs/) — comprehensive and well-written
 - [PostgreSQL Tutorial](https://www.postgresqltutorial.com/) — beginner-friendly with practical examples
 
+## Installation
+
+```bash
+uv add ezql
+pip install ezql
+```
+
 ## Example
 
 ```python
@@ -103,3 +110,8 @@ Validating User → table users
 
 All models are valid ✓
 ```
+
+# TODO
+
+- Migration tool
+- Validate queries
