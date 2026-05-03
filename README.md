@@ -1,5 +1,8 @@
 # EzQL
 
+> [!WARNING]
+> Its not recommended to use in production right now, API is currently unstable
+
 EzQL - a simple wrapper around asyncpg that makes writing raw SQL in python a little easier
 
 SQLAlchemy is overkill and you need something simpler? Have you tried writing raw SQL in Python but ended up in tears because there's no type safety? Then EzQL is your choice
